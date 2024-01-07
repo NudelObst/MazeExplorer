@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 import javax.swing.JPanel;
 
@@ -21,13 +23,20 @@ public class GamePanel extends JPanel implements Runnable{
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
 
+    //World settings
+    public int maxWorldCol;
+    public int maxWorldRow;
+    public final int worldWidth = tileSize * maxWorldCol;
+    public final int worldHeight = tileSize * maxWorldRow;
+
     //FPS
     final int FPS = 60;
 
-    TileManager tileM = new TileManager(this);
+    TileManager tileM;
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
-    Player player = new Player(this, keyH);
+    public CollisionChecker cChecker = new CollisionChecker(this);
+    public Player player = new Player(this, keyH);
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -35,6 +44,34 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
+        initializeMap("./res/maps/WorldmapSettings.txt");
+        tileM = new TileManager(this);
+    }
+    
+    public void initializeMap(String filePath){
+        try {
+            FileReader is = new FileReader(filePath);
+            BufferedReader br = new BufferedReader(is);
+            String line = br.readLine();
+            while (line != null) {
+                if (line.contains("width:")) {
+                    line = line.replaceAll("[^0-9]","");
+                    this.maxWorldCol = Integer.parseInt(line);
+                } else if(line.contains("height:")){                    
+                    line = line.replaceAll("[^0-9]","");
+                    this.maxWorldRow = Integer.parseInt(line);
+                } else if(line.contains("spawnX:")){                    
+                    line = line.replaceAll("[^0-9]","");
+                    player.worldX = tileSize * (Integer.parseInt(line) - 1);
+                } else if(line.contains("spawnY:")){                    
+                    line = line.replaceAll("[^0-9]","");
+                    player.worldY = tileSize * (Integer.parseInt(line) - 1);
+                } 
+                line = br.readLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void startGameThread(){
@@ -91,6 +128,8 @@ public class GamePanel extends JPanel implements Runnable{
         tileM.draw(g2);
 
         player.draw(g2);
+        g2.setColor(Color.green);
+        g2.drawRect(player.screenX + player.collisionArea.x, player.screenY + player.collisionArea.y, player.collisionArea.width, player.collisionArea.height);
 
         g2.dispose();
 

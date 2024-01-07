@@ -1,0 +1,4 @@
+width: 50
+height: 50
+spawnX: 2
+spawnY: 2
