@@ -87,14 +87,9 @@ public class TileManager {
                     worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                     worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
                         
-                        g2.drawImage(tile[mapTileNum[i][j]].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-                    }
+                    g2.drawImage(tile[mapTileNum[i][j]].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                }
             }
         }
-
-        /* g2.drawImage(tile[0].image, 0, 0, gp.tileSize, gp.tileSize, null);
-        g2.drawImage(tile[0].image, 48, 0, gp.tileSize, gp.tileSize, null);
-        g2.drawImage(tile[0].image, 96, 0, gp.tileSize, gp.tileSize, null);
-        g2.drawImage(tile[0].image, 144, 0, gp.tileSize, gp.tileSize, null); */
     }
 }
