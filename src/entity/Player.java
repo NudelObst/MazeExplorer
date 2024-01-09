@@ -2,7 +2,6 @@ package entity;
 
 import main.KeyHandler;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -18,33 +17,89 @@ import main.GamePanel;
 
 public class Player extends Entity{
     
-    GamePanel gp;
-    KeyHandler keyH;
+    private GamePanel gp;
+    private KeyHandler keyH;
 
-    public final int screenX;
-    public final int screenY;
-    Map<String, Image> imageByString;
-    String imageToBePainted;
+    private final int screenX;
+    private final int screenY;
+    private Map<String, Image> imageByString;
+    private String imageToBePainted;
 
     public Player(GamePanel gp, KeyHandler keyH){
         
         this.gp = gp;
         this.keyH = keyH;
 
-        screenX = gp.screenWidth/2 - (gp.tileSize/2);
-        screenY = gp.screenHeight/2 - (gp.tileSize/2);
+        screenX = gp.getScreenWidth()/2 - (gp.getTileSize()/2);
+        screenY = gp.getScreenHeight()/2 - (gp.getTileSize()/2);
 
-        collisionArea = new Rectangle(12, 24,21,18);
+        int collisionAreaX = (int) 12 * (gp.getScale()/3);
+        int collisionAreaY = (int) 24 * (gp.getScale()/3);
+        int collisionAreaWidth = (int) 23 * (gp.getScale()/3);
+        int collisionAreaHeight = (int) 18 * (gp.getScale()/3);
+
+        setCollisionArea(new Rectangle(collisionAreaX, collisionAreaY,collisionAreaWidth ,collisionAreaHeight));
         
         setDefaultValues();
         getPlayerImage();
     }
 
-    public void setDefaultValues(){
-
-        speed = 4;
-        direction = "down";
+    
+    public GamePanel getGp() {
+        return gp;
     }
+
+
+    public void setGp(GamePanel gp) {
+        this.gp = gp;
+    }
+
+
+    public KeyHandler getKeyH() {
+        return keyH;
+    }
+
+
+    public void setKeyH(KeyHandler keyH) {
+        this.keyH = keyH;
+    }
+
+
+    public int getScreenX() {
+        return screenX;
+    }
+
+
+    public int getScreenY() {
+        return screenY;
+    }
+
+
+    public Map<String, Image> getImageByString() {
+        return imageByString;
+    }
+
+
+    public void setImageByString(Map<String, Image> imageByString) {
+        this.imageByString = imageByString;
+    }
+
+
+    public String getImageToBePainted() {
+        return imageToBePainted;
+    }
+
+
+    public void setImageToBePainted(String imageToBePainted) {
+        this.imageToBePainted = imageToBePainted;
+    }
+
+
+    public void setDefaultValues(){
+        setSpeed(4, gp);
+        setDirection("down");
+    }
+
 
     public void getPlayerImage(){        
         
@@ -63,71 +118,73 @@ public class Player extends Entity{
         
         try {
 
-            up0 = ImageIO.read(f0);
-            up1 = ImageIO.read(f1);
-            up2 = ImageIO.read(f2);
-            down0 = ImageIO.read(f3);
-            down1 = ImageIO.read(f4);
-            down2 = ImageIO.read(f5);
-            left0 = ImageIO.read(f6);
-            left1 = ImageIO.read(f7);
-            left2 = ImageIO.read(f8);
-            right0 = ImageIO.read(f9);
-            right1 = ImageIO.read(f10);
-            right2 = ImageIO.read(f11);
+            setUp0(ImageIO.read(f0));
+            setUp1(ImageIO.read(f1));
+            setUp2(ImageIO.read(f2));
+            setDown0(ImageIO.read(f3));
+            setDown1(ImageIO.read(f4));
+            setDown2(ImageIO.read(f5));
+            setLeft0(ImageIO.read(f6));
+            setLeft1(ImageIO.read(f7));
+            setLeft2(ImageIO.read(f8));
+            setRight0(ImageIO.read(f9));
+            setRight1(ImageIO.read(f10));
+            setRight2(ImageIO.read(f11));
             
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         imageByString = new HashMap<String, Image>();
-        imageByString.put("down0", down0);
-        imageByString.put("down1", down1);
-        imageByString.put("down2", down2);
-        imageByString.put("up0", up0);
-        imageByString.put("up1", up1);
-        imageByString.put("up2", up2);
-        imageByString.put("left0", left0);
-        imageByString.put("left1", left1);
-        imageByString.put("left2", left2);
-        imageByString.put("right0", right0);
-        imageByString.put("right1", right1);
-        imageByString.put("right2", right2);
+        imageByString.put("down0", getDown0());
+        imageByString.put("down1", getDown1());
+        imageByString.put("down2", getDown2());
+        imageByString.put("up0", getUp0());
+        imageByString.put("up1", getUp1());
+        imageByString.put("up2", getUp2());
+        imageByString.put("left0", getLeft0());
+        imageByString.put("left1", getLeft1());
+        imageByString.put("left2", getLeft2());
+        imageByString.put("right0", getRight0());
+        imageByString.put("right1", getRight1());
+        imageByString.put("right2", getRight2());
     }
 
     public void update(){
         
-        int dx = speed * keyH.rightPressed - speed * keyH.leftPressed;
-        int dy = speed * keyH.downPressed - speed * keyH.upPressed;
+        int dx = getSpeed() * keyH.getRightPressed() - getSpeed() * keyH.getLeftPressed();
+        int dy = getSpeed() * keyH.getDownPressed() - getSpeed() * keyH.getUpPressed();
         
         if (dx != 0 || dy != 0) {
             
-            direction = (dx !=0)? ((dx <0)? "left" : "right") : ((dy <0)? "up" : "down");
+            setDirection((dx !=0)? ((dx <0)? "left" : "right") : ((dy <0)? "up" : "down"));
             
             //Check Collision
-            collisionOn = false;
-            gp.cChecker.checkTile(this, keyH);
+            setCollisionOn(false);
+            gp.getcChecker().checkTile(this, keyH);
             
-            if (!collisionOn) { 
+            if (!isCollisionOn()) { 
                 
-                worldX += dx;   //Diagonale schneller durch gleichzeitiges drücken oder gleich schnell
-                worldY += dy;  
+                /* int temp = getWorldX() + dx;
+                setWorldX(temp); */
+                setWorldX(getWorldX() + dx);//Diagonale schneller durch gleichzeitiges drücken oder gleich schnell
+                setWorldY(getWorldY() + dy); 
                 
-                spriteCounter++;
-                if (spriteCounter > 20 && spriteNum == 1) {
-                    spriteNum = 2;
-                    spriteCounter = 0;
-                } else if(spriteCounter > 20 && spriteNum == 2) {
-                    spriteNum = 1;
-                    spriteCounter = 0;
+                setSpriteCounter(getSpriteCounter() + 1);
+                if (getSpriteCounter() > 20 && getSpriteNum() == 1) {
+                    setSpriteNum(2);
+                    setSpriteCounter(0);
+                } else if(getSpriteCounter() > 20 && getSpriteNum() == 2) {
+                    setSpriteNum(1);
+                    setSpriteCounter(0);
                 }
                 
-                imageToBePainted = direction + spriteNum;
+                imageToBePainted = getDirection() + getSpriteNum();
                 return;
             }
         }
         
-        imageToBePainted = direction + "0";
+        imageToBePainted = getDirection() + "0";
 
         /* if (keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true) {
             if(keyH.upPressed == true){
@@ -202,6 +259,6 @@ public class Player extends Entity{
                 break; 
         }*/
 
-        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        g2.drawImage(image, screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
     }
 }

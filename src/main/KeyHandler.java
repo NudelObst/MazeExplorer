@@ -5,14 +5,35 @@ import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener{
 
-    final int PRESSED = 1;
-    final int UNPRESSED = 0;
+    private final int PRESSED = 1;
+    private final int UNPRESSED = 0;
 
-    public int upPressed, downPressed, leftPressed, rightPressed;
+    private int upPressed, downPressed, leftPressed, rightPressed;
+    
+    public int getUpPressed() {
+        return upPressed;
+    }
+
+
+    public int getDownPressed() {
+        return downPressed;
+    }
+
+
+    public int getLeftPressed() {
+        return leftPressed;
+    }
+
+
+    public int getRightPressed() {
+        return rightPressed;
+    }
+
 
     @Override
     public void keyTyped(KeyEvent e) {
     }
+
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -33,6 +54,7 @@ public class KeyHandler implements KeyListener{
         }
     }
 
+    
     @Override
     public void keyReleased(KeyEvent e) {
 

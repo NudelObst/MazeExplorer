@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.io.BufferedReader;
-import java.io.FileReader;
 
 import javax.swing.JPanel;
 
@@ -14,29 +12,22 @@ import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable{
     //Screeen settings
-    final int originalTileSize = 16; //16x16 tile
-    final int scale = 3;
+    private final int originalTileSize = 16; //16x16 tile
+    private final int scale = 3;
 
-    public final int tileSize = originalTileSize * scale; //48x48 tile
-    public final int maxScreenCol = 16;
-    public final int maxScreenRow = 12;
-    public final int screenWidth = tileSize * maxScreenCol;
-    public final int screenHeight = tileSize * maxScreenRow;
-
-    //World settings
-    public int maxWorldCol;
-    public int maxWorldRow;
-    public final int worldWidth = tileSize * maxWorldCol;
-    public final int worldHeight = tileSize * maxWorldRow;
-
+    private final int tileSize = originalTileSize * scale; //48x48 tile
+    private final int maxScreenCol = 16;
+    private final int maxScreenRow = 12;
+    private final int screenWidth = tileSize * maxScreenCol;
+    private final int screenHeight = tileSize * maxScreenRow;
     //FPS
-    final int FPS = 60;
+    private final int FPS = 60;
 
-    TileManager tileM;
-    KeyHandler keyH = new KeyHandler();
-    Thread gameThread;
-    public CollisionChecker cChecker = new CollisionChecker(this);
-    public Player player = new Player(this, keyH);
+    private TileManager tileM;
+    private KeyHandler keyH = new KeyHandler();
+    private Thread gameThread;
+    private CollisionChecker cChecker = new CollisionChecker(this);
+    private Player player = new Player(this, keyH);
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -44,40 +35,105 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
-        initializeMap("./res/maps/WorldmapSettings.txt");
         tileM = new TileManager(this);
     }
     
-    public void initializeMap(String filePath){
-        try {
-            FileReader is = new FileReader(filePath);
-            BufferedReader br = new BufferedReader(is);
-            String line = br.readLine();
-            while (line != null) {
-                if (line.contains("width:")) {
-                    line = line.replaceAll("[^0-9]","");
-                    this.maxWorldCol = Integer.parseInt(line);
-                } else if(line.contains("height:")){                    
-                    line = line.replaceAll("[^0-9]","");
-                    this.maxWorldRow = Integer.parseInt(line);
-                } else if(line.contains("spawnX:")){                    
-                    line = line.replaceAll("[^0-9]","");
-                    player.worldX = tileSize * (Integer.parseInt(line) - 1);
-                } else if(line.contains("spawnY:")){                    
-                    line = line.replaceAll("[^0-9]","");
-                    player.worldY = tileSize * (Integer.parseInt(line) - 1);
-                } 
-                line = br.readLine();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    
+    public int getOriginalTileSize() {
+        return originalTileSize;
     }
+
+
+    public int getScale() {
+        return scale;
+    }
+
+
+    public int getTileSize() {
+        return tileSize;
+    }
+
+
+    public int getMaxScreenCol() {
+        return maxScreenCol;
+    }
+
+
+    public int getMaxScreenRow() {
+        return maxScreenRow;
+    }
+
+
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+
+
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+
+
+    public int getFPS() {
+        return FPS;
+    }
+
+
+    public TileManager getTileM() {
+        return tileM;
+    }
+
+
+    public void setTileM(TileManager tileM) {
+        this.tileM = tileM;
+    }
+
+
+    public KeyHandler getKeyH() {
+        return keyH;
+    }
+
+
+    public void setKeyH(KeyHandler keyH) {
+        this.keyH = keyH;
+    }
+
+
+    public Thread getGameThread() {
+        return gameThread;
+    }
+
+
+    public void setGameThread(Thread gameThread) {
+        this.gameThread = gameThread;
+    }
+
+
+    public CollisionChecker getcChecker() {
+        return cChecker;
+    }
+
+
+    public void setcChecker(CollisionChecker cChecker) {
+        this.cChecker = cChecker;
+    }
+
+
+    public Player getPlayer() {
+        return player;
+    }
+
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
 
     public void startGameThread(){
         gameThread = new Thread(this);
         gameThread.start();
     }
+
 
     @Override
     public void run() {
@@ -110,7 +166,7 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-    public void update(){
+    private void update(){
         player.update();
     }
 
@@ -124,7 +180,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         player.draw(g2);
         g2.setColor(Color.green);
-        g2.drawRect(player.screenX + player.collisionArea.x, player.screenY + player.collisionArea.y, player.collisionArea.width, player.collisionArea.height);
+        //g2.drawRect(player.getScreenX() + player.getCollisionArea().x, player.getScreenY() + player.getCollisionArea().y, player.getCollisionArea().width, player.getCollisionArea().height);
 
         g2.dispose();
 
