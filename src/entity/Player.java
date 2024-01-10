@@ -262,3 +262,7 @@ public class Player extends Entity{
         g2.drawImage(image, screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
     }
 }
+
+
+
+//ökajhgoahüoihsgüa
